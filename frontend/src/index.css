@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@plugin "daisyui/theme" {
+  --color-base-content: #181818;
+}
 
 :root {
   --background: #edeff1;
@@ -14,4 +17,6 @@
 @theme {
   --color-background: var(--background);
   --color-text: var(--text);
+  --color-primary: #d7263d;
+  --color-secondary: #02182b;
 }
