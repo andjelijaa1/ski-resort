@@ -1,5 +1,11 @@
+import ThemeToggle from "./components/ThemeToggle";
+
 function App() {
-  return <p className="text-9xl text-purple-400">TO BOZE!</p>;
+  return (
+    <div className="bg-background text-text min-h-screen ">
+      <ThemeToggle />
+    </div>
+  );
 }
 
 export default App;

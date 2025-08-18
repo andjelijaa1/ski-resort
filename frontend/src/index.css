@@ -1,1 +1,17 @@
 @import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  --background: #edeff1;
+  --text: #181818;
+}
+
+:root.dark {
+  --background: #181818;
+  --text: #edeff1;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-text: var(--text);
+}
