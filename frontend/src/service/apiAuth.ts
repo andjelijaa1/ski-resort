@@ -15,16 +15,13 @@ export async function login({
   password: string;
 }) {
   try {
-    const res = await api.post("http://localhost:5000/api/auth/login", {
-      email,
-      password,
-    });
-
-    const { accessToken } = res.data;
+    const res = await api.post("/auth/login", { email, password });
+    const { accessToken, refreshToken } = res.data;
     localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("refresh_token", refreshToken);
     return res.data;
   } catch (err: any) {
-    if (err.response && err.response.data && err.response.data.message) {
+    if (err.response?.data?.message) {
       throw new Error(err.response.data.message);
     }
     throw new Error("Login failed. Please try again.");

@@ -3,9 +3,7 @@ import type { AxiosInstance } from "axios";
 
 const api: AxiosInstance = axios.create({
   baseURL: "http://localhost:5000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: { "Content-Type": "application/json" },
 });
 
 let isRefreshing = false;
@@ -16,13 +14,9 @@ let failedQueue: {
 
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
-    if (token) {
-      prom.resolve(token);
-    } else {
-      prom.reject(error);
-    }
+    if (token) prom.resolve(token);
+    else prom.reject(error);
   });
-
   failedQueue = [];
 };
 
@@ -31,7 +25,13 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest: any = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // ⚠️ Ignoriši refresh za login/signup
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/login") &&
+      !originalRequest.url?.includes("/auth/signup")
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -48,9 +48,7 @@ api.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem("refresh_token");
-        if (!refreshToken) {
-          throw new Error("No refresh token");
-        }
+        if (!refreshToken) throw new Error("No refresh token");
 
         const res = await axios.post("http://localhost:5000/api/auth/refresh", {
           token: refreshToken,
@@ -58,7 +56,6 @@ api.interceptors.response.use(
 
         const newAccessToken = res.data.accessToken;
         localStorage.setItem("access_token", newAccessToken);
-
         api.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${newAccessToken}`;

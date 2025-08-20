@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { AlertCircleIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 function Login() {
   const navigate = useNavigate();
@@ -19,18 +20,31 @@ function Login() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm<TSLogInSchema>({
     resolver: zodResolver(logInSchema),
   });
 
-  const { mutate, isPending, isError } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (data: TSLogInSchema) => login(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       navigate("/dashboard");
     },
     onError: (err: any) => {
-      console.error("Login failed:", err.message);
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Login failed. Please try again.";
+      toast.error("Login Failed", {
+        description: message,
+        duration: 4000,
+      });
+      if (message.toLowerCase().includes("email")) {
+        reset({ email: "" });
+      } else if (message.toLowerCase().includes("password")) {
+        reset({ password: "" });
+      }
     },
   });
 
@@ -48,7 +62,7 @@ function Login() {
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
           <Input type="email" placeholder="Email" {...register("email")} />
           {errors.email && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="z-50 absolute">
               <AlertCircleIcon />
               <AlertTitle>{errors.email.message}.</AlertTitle>
             </Alert>
@@ -72,19 +86,10 @@ function Login() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="cursor-pointer text-text  tracking-wide  font-semibold"
+            className="cursor-pointer text-text  tracking-wide  font-semibold relative"
           >
             {isPending ? "Logging in..." : "Log in"}
           </Button>
-          <div className="min-h-[60px]">
-            {isError && (
-              <Alert variant="destructive" className="relative">
-                <AlertCircleIcon className="h-4 w-4" />
-                <AlertTitle>Login Failed</AlertTitle>
-                <AlertDescription></AlertDescription>
-              </Alert>
-            )}
-          </div>
         </form>
       </div>
     </div>
