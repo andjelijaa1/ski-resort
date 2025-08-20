@@ -7,14 +7,28 @@ export interface AuthResponse {
 }
 
 // Login
-export async function login(email: string, password: string) {
-  const res = await api.post("http://localhost:5000/api/auth/login", {
-    email,
-    password,
-  });
-  const { accessToken } = res.data;
-  localStorage.setItem("access_token", accessToken);
-  return res.data;
+export async function login({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  try {
+    const res = await api.post("http://localhost:5000/api/auth/login", {
+      email,
+      password,
+    });
+
+    const { accessToken } = res.data;
+    localStorage.setItem("access_token", accessToken);
+    return res.data;
+  } catch (err: any) {
+    if (err.response && err.response.data && err.response.data.message) {
+      throw new Error(err.response.data.message);
+    }
+    throw new Error("Login failed. Please try again.");
+  }
 }
 
 // Signup

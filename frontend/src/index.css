@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -46,13 +48,6 @@
 :root.dark {
   --background: #181818;
   --text: #edeff1;
-}
-
-@theme {
-  --color-background: var(--background);
-  --color-text: var(--text);
-  --color-primary: #d7263d;
-  --color-secondary: #02182b;
 }
 
 @theme inline {
@@ -134,4 +129,14 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-text: var(--text);
+  --color-first: #1971c2;
+  --color-secondary: #02182b;
+}
+body {
+  font-family: "Albert-Sans", "Lato", sans-serif !important;
 }

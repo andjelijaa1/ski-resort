@@ -3,7 +3,7 @@ import { z } from "zod";
 export const signUpSchema = z
   .object({
     email: z.string().email(),
-    password: z.string().min(10, "Password must be at least 10 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -11,4 +11,10 @@ export const signUpSchema = z
     path: ["confirmPassword"],
   });
 
+export const logInSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8, "Password must be at least 8 characters!"),
+});
+
 export type TSignUpSchema = z.infer<typeof signUpSchema>;
+export type TSLogInSchema = z.infer<typeof logInSchema>;
