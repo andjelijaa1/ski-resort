@@ -84,7 +84,7 @@ function Login() {
               type="password"
               {...register("password")}
               className={`w-full px-3 py-2 border rounded-md pr-24 
-      ${errors.password ? "border-red-500" : ""}`}
+        ${errors.password ? "border-red-500" : ""}`}
             />
             {errors.password && (
               <Alert variant="destructive">
