@@ -4,6 +4,7 @@ import type { AxiosInstance } from "axios";
 const api: AxiosInstance = axios.create({
   baseURL: "http://localhost:5000/api",
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 let isRefreshing = false;
@@ -20,18 +21,26 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
+// u memory držimo access token
+let accessToken: string | null = null;
+export const setAccessToken = (token: string | null) => {
+  accessToken = token;
+};
+export const getAccessToken = () => accessToken;
+
+api.interceptors.request.use((config) => {
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest: any = error.config;
 
-    // ⚠️ Ignoriši refresh za login/signup
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes("/auth/login") &&
-      !originalRequest.url?.includes("/auth/signup")
-    ) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -45,34 +54,30 @@ api.interceptors.response.use(
 
       originalRequest._retry = true;
       isRefreshing = true;
-
       try {
-        const refreshToken = localStorage.getItem("refresh_token");
-        if (!refreshToken) throw new Error("No refresh token");
-
-        const res = await axios.post("http://localhost:5000/api/auth/refresh", {
-          token: refreshToken,
-        });
+        const res = await axios.post(
+          "http://localhost:5000/api/auth/refresh",
+          {},
+          { withCredentials: true }
+        );
 
         const newAccessToken = res.data.accessToken;
-        localStorage.setItem("access_token", newAccessToken);
+        setAccessToken(newAccessToken);
+
         api.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${newAccessToken}`;
         processQueue(null, newAccessToken);
-
         return api(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        setAccessToken(null);
         window.location.href = "/login";
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
       }
     }
-
     return Promise.reject(error);
   }
 );
