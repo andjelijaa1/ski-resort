@@ -29,13 +29,19 @@ export async function login({
 }
 
 // Signup
-export async function signup(
-  username: string,
-  email: string,
-  password: string
-): Promise<AuthResponse> {
+export async function signup({
+  user_name,
+  email,
+  password,
+  confirmPassword,
+}: {
+  user_name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}): Promise<AuthResponse> {
   const res = await api.post("/auth/signup", {
-    user_name: username,
+    user_name: user_name,
     user_email: email,
     user_password: password,
   });
