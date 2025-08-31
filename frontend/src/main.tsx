@@ -5,14 +5,17 @@ import "./index.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
-      <Toaster position="top-left" />
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <App />
+        <Toaster position="top-left" />
+      </ThemeProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );

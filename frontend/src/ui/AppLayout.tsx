@@ -1,20 +1,19 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { Outlet } from "react-router-dom";
 import AppSidebar from "./AppSIdebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-function AppLayout() {
+export default function AppLayout() {
   return (
-    <SidebarProvider>
-      <div className="grid grid-cols-[260px_1fr]  h-screen">
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex max-h-screen w-full">
         <AppSidebar />
-        <main className="bg-gray-50 p-6 overflow-y-auto">
-          <div className="max-w-5xl mx-auto">
-            <Outlet />
-          </div>
+
+        <main className="flex-1 flex flex-col p-4">
+          <SidebarTrigger className="mb-4 cursor-pointer" />
+
+          <Outlet />
         </main>
       </div>
     </SidebarProvider>
   );
 }
-
-export default AppLayout;

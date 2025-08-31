@@ -45,11 +45,6 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-:root.dark {
-  --background: #181818;
-  --text: #edeff1;
-}
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -131,12 +126,18 @@
   }
 }
 
-@theme {
+/* @theme {
   --color-background: var(--background);
-  --color-text: var(--text);
+  --color-text: #181818;
   --color-first: #1971c2;
   --color-secondary: #02182b;
 }
+
+:root.dark {
+  --background: #181818;
+  --text: #edeff1;
+} */
+
 body {
   font-family: "Albert-Sans", "Lato", sans-serif !important;
 }
