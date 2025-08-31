@@ -1,6 +1,5 @@
 import express from "express";
 import pool from "../db/config.js";
-import { authenticateToken } from "../middleware/authorization.js";
 
 const router = express.Router();
 
@@ -13,7 +12,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/me", authenticateToken, async (req, res) => {
+router.get("/me", async (req, res) => {
   try {
     res.json({ user: req.user });
   } catch (err) {

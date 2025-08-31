@@ -1,10 +1,8 @@
 import jwt from "jsonwebtoken";
 
 function authenticateToken(req, res, next) {
-  // Prvo pokušaj iz cookies (novi način)
   let token = req.cookies?.access_token;
 
-  // Fallback: ako nema u cookies, pokušaj iz header-a (stari način)
   if (!token) {
     const authHeader = req.headers["authorization"];
     token = authHeader && authHeader.split(" ")[1];

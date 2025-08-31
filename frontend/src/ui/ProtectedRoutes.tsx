@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../features/authentication/useUser";
+import Spinner from "./Spinner";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -8,7 +9,7 @@ type ProtectedRouteProps = {
 
 function ProtectedRoute({ children }: ProtectedRouteProps) {
   const navigate = useNavigate();
-  const { user, isLoading, isAuthenticated } = useUser();
+  const { isLoading, isAuthenticated } = useUser();
 
   useEffect(() => {
     if (!isAuthenticated && !isLoading) {
@@ -17,11 +18,7 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
   }, [isAuthenticated, isLoading, navigate]);
 
   if (isLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="animate-spin h-10 w-10 rounded-full border-4 border-blue-500 border-t-transparent"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (isAuthenticated) return <>{children}</>;
