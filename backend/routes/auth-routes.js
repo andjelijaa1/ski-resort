@@ -79,12 +79,14 @@ router.post("/refresh", (req, res) => {
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) return res.status(403).json({ message: "Invalid refresh token" });
 
-    const accessToken = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
-    );
-    res.json({ accessToken });
+    const tokens = jwtTokens({
+      user_id: user.user_id,
+      user_name: user.user_name,
+      user_email: user.user_email,
+      user_role: user.role,
+    });
+
+    res.json({ accessToken: tokens.accessToken });
   });
 });
 
