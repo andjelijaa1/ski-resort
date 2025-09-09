@@ -10,8 +10,9 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: logout,
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.removeQueries({ queryKey: ["user"] });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("/login");
       toast.success("Successfully logged out");
     },

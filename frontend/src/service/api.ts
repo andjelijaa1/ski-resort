@@ -40,7 +40,20 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest: any = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Proveravamo da li je greška 401 I da li je zbog expired tokena
+    // Ali NE za login/signup/refresh rute jer one mogu legitimno da vrate 401
+    const isAuthRoute = originalRequest.url?.includes("/auth/");
+    const isLoginOrSignup =
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/auth/signup") ||
+      originalRequest.url?.includes("/auth/refresh");
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isLoginOrSignup &&
+      accessToken // Samo ako imamo access token (znači da smo bili ulogovani)
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -54,6 +67,7 @@ api.interceptors.response.use(
 
       originalRequest._retry = true;
       isRefreshing = true;
+
       try {
         const res = await axios.post(
           "http://localhost:5000/api/auth/refresh",
@@ -68,16 +82,26 @@ api.interceptors.response.use(
           "Authorization"
         ] = `Bearer ${newAccessToken}`;
         processQueue(null, newAccessToken);
+
+        // Ponovimo originalni zahtev sa novim tokenom
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return api(originalRequest);
-      } catch (err) {
-        processQueue(err, null);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
         setAccessToken(null);
-        window.location.href = "/login";
-        return Promise.reject(err);
+
+        // Logout samo ako refresh ne uspe
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
+        return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
+
+    // Prosleđujemo originalnu grešku dalje bez promene
+    // Ovo omogućava da vaši endpointi sačuvaju svoje error poruke
     return Promise.reject(error);
   }
 );

@@ -19,6 +19,7 @@ import { sidebarItems } from "@/lib/sidebarItems";
 import { ChevronsUpDown, Command } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useLogout } from "@/hooks/useLogout";
+import Spinner from "@/ui/Spinner";
 
 type Role = "user" | "admin" | "instructor";
 
@@ -26,7 +27,7 @@ export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const { user, isLoading } = useUser();
-  const { mutate: logoutUser } = useLogout();
+  const { mutate: logoutUser, isPending } = useLogout(); // 👈 ubaci isPending
 
   if (isLoading) return null;
 
@@ -44,59 +45,68 @@ export default function AppSidebar({
   const handleLogout = () => logoutUser();
 
   return (
-    <Sidebar collapsible="icon" {...props} className="!bg-background2">
-      <SidebarHeader>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            size="lg"
-            className="data-[state=open]:bg-background2 data-[state=open]:text-sidebar-accent-foreground"
-          >
-            <div className="bg-first text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-              <activeTeam.logo className="size-4" />
-            </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{activeTeam.name}</span>
-              <span className="truncate text-xs">{activeTeam.plan}</span>
-            </div>
-            <ChevronsUpDown className="ml-auto" />
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarHeader>
-
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className="hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <Link to={item.href}>
-                      <item.icon className="mr-2 h-4 w-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <div className="flex justify-between items-center">
-                <ModeToggle />
+    <>
+      {/* Sidebar */}
+      <Sidebar collapsible="icon" {...props} className="!bg-background2">
+        <SidebarHeader>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-background2 data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="bg-first text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <activeTeam.logo className="size-4" />
               </div>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
-      </SidebarContent>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{activeTeam.name}</span>
+                <span className="truncate text-xs">{activeTeam.plan}</span>
+              </div>
+              <ChevronsUpDown className="ml-auto" />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarHeader>
 
-      <SidebarFooter>
-        <NavUser user={currentUser} onLogout={handleLogout} />
-      </SidebarFooter>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <Link to={item.href}>
+                        <item.icon className="mr-2 h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <div className="flex justify-between items-center">
+                  <ModeToggle />
+                </div>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
 
-      <SidebarRail />
-    </Sidebar>
+        <SidebarFooter>
+          <NavUser user={currentUser} onLogout={handleLogout} />
+        </SidebarFooter>
+
+        <SidebarRail />
+      </Sidebar>
+
+      {isPending && (
+        <div className="fixed inset-0 flex items-center justify-center bg-[#181818] z-50">
+          <Spinner />
+        </div>
+      )}
+    </>
   );
 }
