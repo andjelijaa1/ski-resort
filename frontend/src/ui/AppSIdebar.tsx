@@ -12,11 +12,13 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
-import { useUser } from "@/features/authentication/useUser";
+import { useUser } from "@/hooks/useUser";
 import { NavUser } from "@/components/nav-user";
 import type { SidebarItem } from "@/lib/sidebarItems";
 import { sidebarItems } from "@/lib/sidebarItems";
 import { ChevronsUpDown, Command } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
+import { useLogout } from "@/hooks/useLogout";
 
 type Role = "user" | "admin" | "instructor";
 
@@ -24,6 +26,7 @@ export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const { user, isLoading } = useUser();
+  const { mutate: logoutUser } = useLogout();
 
   if (isLoading) return null;
 
@@ -36,20 +39,17 @@ export default function AppSidebar({
     avatar: user?.user?.avatarUrl ?? "/avatars/default.png",
   };
 
-  const activeTeam = { name: "Evil Corp.", logo: Command, plan: "Free" };
+  const activeTeam = { name: "Evil .", logo: Command, plan: "Free" };
 
-  const handleLogout = () => {
-    // ubaci svoj logout handler
-    console.log("Logging out…");
-  };
+  const handleLogout = () => logoutUser();
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props} className="!bg-background2">
       <SidebarHeader>
         <SidebarMenuItem>
           <SidebarMenuButton
             size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            className="data-[state=open]:bg-background2 data-[state=open]:text-sidebar-accent-foreground"
           >
             <div className="bg-first text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
               <activeTeam.logo className="size-4" />
@@ -82,10 +82,17 @@ export default function AppSidebar({
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <div className="flex justify-between items-center">
+                <ModeToggle />
+              </div>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="cursor-pointer">
+      <SidebarFooter>
         <NavUser user={currentUser} onLogout={handleLogout} />
       </SidebarFooter>
 
