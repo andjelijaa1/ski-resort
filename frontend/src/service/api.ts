@@ -4,36 +4,22 @@ import type { AxiosInstance } from "axios";
 const api: AxiosInstance = axios.create({
   baseURL: "http://localhost:5000/api",
   headers: { "Content-Type": "application/json" },
-  withCredentials: true,
+  withCredentials: true, // Ovo je ključno - šalje cookie-je automatski
 });
 
 let isRefreshing = false;
 let failedQueue: {
-  resolve: (token: string) => void;
+  resolve: (value?: any) => void;
   reject: (err: any) => void;
 }[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: any) => {
   failedQueue.forEach((prom) => {
-    if (token) prom.resolve(token);
-    else prom.reject(error);
+    if (error) prom.reject(error);
+    else prom.resolve();
   });
   failedQueue = [];
 };
-
-// u memory držimo access token
-let accessToken: string | null = null;
-export const setAccessToken = (token: string | null) => {
-  accessToken = token;
-};
-export const getAccessToken = () => accessToken;
-
-api.interceptors.request.use((config) => {
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
 
 api.interceptors.response.use(
   (response) => response,
@@ -42,8 +28,7 @@ api.interceptors.response.use(
 
     // Proveravamo da li je greška 401 I da li je zbog expired tokena
     // Ali NE za login/signup/refresh rute jer one mogu legitimno da vrate 401
-    const isAuthRoute = originalRequest.url?.includes("/auth/");
-    const isLoginOrSignup =
+    const isAuthRoute =
       originalRequest.url?.includes("/auth/login") ||
       originalRequest.url?.includes("/auth/signup") ||
       originalRequest.url?.includes("/auth/refresh");
@@ -51,15 +36,13 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !isLoginOrSignup &&
-      accessToken // Samo ako imamo access token (znači da smo bili ulogovani)
+      !isAuthRoute
     ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => {
-            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+          .then(() => {
             return api(originalRequest);
           })
           .catch((err) => Promise.reject(err));
@@ -69,26 +52,19 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await axios.post(
+        // Pokušaj refresh - ako uspe, backend će postaviti novi access_token cookie
+        await axios.post(
           "http://localhost:5000/api/auth/refresh",
           {},
           { withCredentials: true }
         );
 
-        const newAccessToken = res.data.accessToken;
-        setAccessToken(newAccessToken);
+        processQueue(null);
 
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${newAccessToken}`;
-        processQueue(null, newAccessToken);
-
-        // Ponovimo originalni zahtev sa novim tokenom
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        // Ponovimo originalni zahtev - sada sa novim access token cookie-jem
         return api(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
-        setAccessToken(null);
+        processQueue(refreshError);
 
         // Logout samo ako refresh ne uspe
         if (window.location.pathname !== "/login") {
@@ -101,7 +77,6 @@ api.interceptors.response.use(
     }
 
     // Prosleđujemo originalnu grešku dalje bez promene
-    // Ovo omogućava da vaši endpointi sačuvaju svoje error poruke
     return Promise.reject(error);
   }
 );

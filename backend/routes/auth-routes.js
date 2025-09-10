@@ -24,14 +24,26 @@ router.post("/signup", async (req, res) => {
     );
     const tokens = jwtTokens(newUser.rows[0]);
 
+    // Čuvaj oba tokena u cookie-jima
     res.cookie("refresh_token", tokens.refreshToken, {
       ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dana
     });
 
-    res.json({ accessToken: tokens.accessToken, user: newUser.rows[0] });
+    res.cookie("access_token", tokens.accessToken, {
+      ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 15 * 60 * 1000, // 15 minuta
+    });
+
+    // Ukloni password iz response-a
+    const { user_password: __, ...userWithoutPassword } = newUser.rows[0];
+    res.json({ user: userWithoutPassword });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -57,14 +69,26 @@ router.post("/login", async (req, res) => {
 
     const tokens = jwtTokens(user.rows[0]);
 
+    // Čuvaj oba tokena u cookie-jima
     res.cookie("refresh_token", tokens.refreshToken, {
       ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dana
     });
 
-    res.json({ accessToken: tokens.accessToken, user: user.rows[0] });
+    res.cookie("access_token", tokens.accessToken, {
+      ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 15 * 60 * 1000, // 15 minuta
+    });
+
+    // Ukloni password iz response-a
+    const { user_password: __, ...userWithoutPassword } = user.rows[0];
+    res.json({ user: userWithoutPassword });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -86,13 +110,28 @@ router.post("/refresh", (req, res) => {
       user_role: user.role,
     });
 
-    res.json({ accessToken: tokens.accessToken });
+    // Postavi novi access token u cookie
+    res.cookie("access_token", tokens.accessToken, {
+      ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 15 * 60 * 1000, // 15 minuta
+    });
+
+    res.json({ success: true });
   });
 });
 
 // Logout
 router.delete("/logout", (req, res) => {
   res.clearCookie("refresh_token", {
+    ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
+  res.clearCookie("access_token", {
     ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
     httpOnly: true,
     sameSite: "none",
