@@ -1,5 +1,5 @@
-import type { TSignUpSchema } from "@/lib/types";
-import { signUpSchema } from "@/lib/types";
+import type { TSignUpSchema } from "@/types/types";
+import { signUpSchema } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 

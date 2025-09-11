@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "../service/apiAuth";
 import { useNavigate, Link } from "react-router-dom";
-import { logInSchema } from "@/lib/types";
-import type { TSLogInSchema } from "@/lib/types";
+import { logInSchema } from "@/types/types";
+import type { TSLogInSchema } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { AlertCircleIcon } from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ModeToggle } from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/layout/mode-toggle";
 
 function Login() {
   const navigate = useNavigate();

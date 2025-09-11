@@ -27,5 +27,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "src/context/theme-provider.tsx",
+    "src/data/sidebarItems.ts"
+  ]
 }

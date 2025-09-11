@@ -12,14 +12,14 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
-import { useUser } from "@/hooks/useUser";
-import { NavUser } from "@/components/nav-user";
-import type { SidebarItem } from "@/lib/sidebarItems";
-import { sidebarItems } from "@/lib/sidebarItems";
+import { useUser } from "@/features/authentication/useUser";
+import { NavUser } from "@/components/layout/nav-user";
+import type { SidebarItem } from "./../data/sidebarItems";
+import { sidebarItems } from "@/data/sidebarItems";
 import { ChevronsUpDown, Command } from "lucide-react";
-import { ModeToggle } from "@/components/mode-toggle";
-import { useLogout } from "@/hooks/useLogout";
-import Spinner from "@/ui/Spinner";
+import { ModeToggle } from "@/components/layout/mode-toggle";
+import { useLogout } from "@/features/authentication/useLogout";
+import Spinner from "@/components/Spinner";
 
 type Role = "user" | "admin" | "instructor";
 
