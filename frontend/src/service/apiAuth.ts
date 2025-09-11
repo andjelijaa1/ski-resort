@@ -24,11 +24,13 @@ export async function signup({
   email: string;
   password: string;
 }): Promise<AuthResponse> {
-  const res = await api.post("/auth/signup", {
+  const payload = {
     user_name,
     user_email: email,
     user_password: password,
-  });
+  };
+
+  const res = await api.post("/auth/signup", payload);
   return res.data;
 }
 

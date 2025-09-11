@@ -32,3 +32,41 @@ export const deleteAll = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updateUserRole = async (req, res, next) => {
+  try {
+    const { email, role } = req.body;
+
+    if (!email || !role) {
+      return next(new AppError("Email and role are required", 400));
+    }
+
+    const allowedRoles = ["admin", "instructor", "user"];
+    if (!allowedRoles.includes(role)) {
+      return next(
+        new AppError(
+          "Invalid role. Allowed roles: " + allowedRoles.join(", "),
+          400
+        )
+      );
+    }
+
+    const updatedUser = await UserModel.updateUserRoleByEmail(email, role);
+
+    if (!updatedUser) {
+      return next(new AppError("User not found!", 404));
+    }
+
+    res.json({
+      message: "User role updated successfully",
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        user_name: updatedUser.user_name,
+        user_role: updatedUser.user_role,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};

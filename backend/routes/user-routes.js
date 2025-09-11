@@ -4,16 +4,27 @@ import authorizeRoles from "../middleware/roleAuth.js";
 
 const router = express.Router();
 
-router.get("/", UserController.getUsers);
+router.get(
+  "/",
+  authorizeRoles("super_admin", "admin", "instructor"),
+  UserController.getUsers
+);
+
 router.get(
   "/me",
-  (authorizeRoles = "admin,instructor,super_admin"),
+
   UserController.getMe
 );
 router.delete(
   "/delete-all",
-  (authorizeRoles = "super_admin"),
+  authorizeRoles("super_admin"),
   UserController.deleteAll
+);
+
+router.put(
+  "/update-role",
+  authorizeRoles("super_admin", "admin"),
+  UserController.updateUserRole
 );
 
 export default router;

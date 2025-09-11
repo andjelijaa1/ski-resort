@@ -1,8 +1,8 @@
 import Login from "@/pages/Login";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./ui/ProtectedRoutes";
-import AppLayout from "./ui/AppLayout";
+import ProtectedRoute from "@/components/layout/ProtectedRoutes";
+import AppLayout from "@/components/layout/AppLayout";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 

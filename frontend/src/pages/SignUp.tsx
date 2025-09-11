@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signup } from "../service/apiAuth";
-import ThemeToggle from "@/components/ThemeToggle";
+import { ModeToggle } from "@/components/layout/mode-toggle";
 import { useForm } from "react-hook-form";
 import type { TSignUpSchema } from "@/types/types";
 import { signUpSchema } from "@/types/types";
@@ -47,13 +47,14 @@ export default function SignUp() {
   });
 
   const onSubmit = (data: TSignUpSchema) => {
+    console.log("Form data being sent:", data);
     mutate(data);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="absolute top-4 right-4">
-        <ThemeToggle />
+        <ModeToggle />
       </div>
       <div className="w-[50%] flex flex-col justify-center items-center">
         <h1 className="text-2xl font-bold mb-6 text-center">

@@ -33,3 +33,14 @@ export const deleteAllUsers = async () => {
   );
   return rows;
 };
+
+export const updateUserRoleByEmail = async (email, newRole) => {
+  const { rows } = await pool.query(
+    `UPDATE users 
+     SET user_role = $1 
+     WHERE user_email = $2 
+     RETURNING *`,
+    [newRole, email]
+  );
+  return rows[0];
+};
