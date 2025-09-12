@@ -20,6 +20,7 @@ export const getAllUsers = async () => {
   const { rows } = await pool.query(`
     SELECT user_id, user_name, user_email, user_role
     FROM users
+    WHERE user_role != 'super_admin' 
   `);
   return rows;
 };
@@ -27,8 +28,7 @@ export const getAllUsers = async () => {
 export const deleteAllUsers = async () => {
   const { rows } = await pool.query(
     `DELETE FROM users 
-     WHERE user_role != 'super_admin' 
-     AND user_name != 'testuser'
+     WHERE user_role != 'super_admin'
      RETURNING *`
   );
   return rows;

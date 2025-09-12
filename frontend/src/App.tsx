@@ -5,6 +5,7 @@ import ProtectedRoute from "@/components/layout/ProtectedRoutes";
 import AppLayout from "@/components/layout/AppLayout";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
+import Users from "./pages/Users";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           >
             <Route index element={<Navigate replace to="dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
             <Route path="*" element={<NotFound />} />
           </Route>
 
