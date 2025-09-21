@@ -8,10 +8,10 @@ import dotenv from "dotenv";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
-import authRouter from "./routes/auth-routes.js";
-import userRouter from "./routes/user-routes.js";
-import { authenticateToken } from "./middleware/authorization.js";
-import errorHandler from "./middleware/errorHandler.js";
+import authRouter from "./src/routes/auth-routes.js";
+import userRouter from "./src/routes/user-routes.js";
+import { authenticateToken } from "./src/middleware/authorization.js";
+import errorHandler from "./src/middleware/errorHandler.js";
 
 dotenv.config();
 

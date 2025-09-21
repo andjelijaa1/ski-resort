@@ -19,3 +19,10 @@ export const logInSchema = z.object({
 
 export type TSignUpSchema = z.infer<typeof signUpSchema>;
 export type TSLogInSchema = z.infer<typeof logInSchema>;
+
+export type User = {
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  user_role: "user" | "instructor" | "admin";
+};
