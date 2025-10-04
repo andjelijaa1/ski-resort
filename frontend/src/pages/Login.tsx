@@ -82,6 +82,7 @@ function Login() {
             <Input
               id="password"
               type="password"
+              defaultValue="admin122343"
               {...register("password")}
               className={`w-full px-3 py-2 border rounded-md pr-24 
         ${errors.password ? "border-red-500" : ""}`}

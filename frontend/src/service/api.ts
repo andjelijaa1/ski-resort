@@ -52,7 +52,6 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Pokušaj refresh - ako uspe, backend će postaviti novi access_token cookie
         await axios.post(
           "http://localhost:5000/api/auth/refresh",
           {},
@@ -61,7 +60,6 @@ api.interceptors.response.use(
 
         processQueue(null);
 
-        // Ponovimo originalni zahtev - sada sa novim access token cookie-jem
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);

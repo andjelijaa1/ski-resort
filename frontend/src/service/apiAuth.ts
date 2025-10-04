@@ -40,5 +40,6 @@ export async function logout() {
 
 export async function getCurrentUser() {
   const res = await api.get("/users/me");
+  console.log(res.data.user);
   return res.data;
 }

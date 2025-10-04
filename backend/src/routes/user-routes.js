@@ -27,4 +27,28 @@ router.put(
   UserController.updateUserRole
 );
 
+router.get(
+  "/:userId",
+  authorizeRoles("super_admin", "admin"),
+  UserController.getUser
+);
+
+router.put(
+  "/:userId",
+  authorizeRoles("super_admin", "admin"),
+  UserController.updateUser
+);
+
+router.delete(
+  "/:userId",
+  authorizeRoles("super_admin", "admin"),
+  UserController.deleteUser
+);
+
+router.put(
+  "/update-role",
+  authorizeRoles("super_admin", "admin"),
+  UserController.updateUserRole
+);
+
 export default router;

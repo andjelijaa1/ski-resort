@@ -11,27 +11,26 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@/features/authentication/useUser";
 import { NavUser } from "@/components/layout/nav-user";
-import type { SidebarItem } from "./../data/sidebarItems";
+import type { SidebarItem } from "../../data/sidebarItems";
 import { sidebarItems } from "@/data/sidebarItems";
-import { ChevronsUpDown, Command } from "lucide-react";
 import { ModeToggle } from "@/components/layout/mode-toggle";
 import { useLogout } from "@/features/authentication/useLogout";
 import Spinner from "@/components/Spinner";
-
-type Role = "user" | "admin" | "instructor";
+import { Command } from "lucide-react";
 
 export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const { user, isLoading } = useUser();
-  const { mutate: logoutUser, isPending } = useLogout(); // 👈 ubaci isPending
+  const { user, role, isLoading } = useUser();
+  const { mutate: logoutUser, isPending } = useLogout();
+  const location = useLocation();
 
-  if (isLoading) return null;
+  // Dok se ne učita user ili role, prikazujemo loading
+  if (isLoading || !role) return <Spinner />;
 
-  const role: Role = (user?.user?.role as Role) ?? "user";
   const items: SidebarItem[] = sidebarItems[role];
 
   const currentUser = {
@@ -46,7 +45,6 @@ export default function AppSidebar({
 
   return (
     <>
-      {/* Sidebar */}
       <Sidebar collapsible="icon" {...props} className="!bg-background2">
         <SidebarHeader>
           <SidebarMenuItem>
@@ -61,37 +59,41 @@ export default function AppSidebar({
                 <span className="truncate font-medium">{activeTeam.name}</span>
                 <span className="truncate text-xs">{activeTeam.plan}</span>
               </div>
-              <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarHeader>
 
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupContent>
+            <SidebarGroupContent className="gap-5">
               <SidebarMenu>
-                {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      className="hover:bg-accent hover:text-accent-foreground"
-                    >
-                      <Link to={item.href}>
-                        <item.icon className="mr-2 h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {items.map((item) => {
+                  const isActive = location.pathname === item.href;
+
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        className={`hover:bg-accent hover:text-accent-foreground ${
+                          isActive ? "bg-accent text-accent-foreground" : ""
+                        }`}
+                      >
+                        <Link to={item.href} className="flex items-center">
+                          <div
+                            className={`mr-2 h-5 w-5 flex items-center justify-center rounded ${
+                              isActive ? "bg-first text-white" : ""
+                            }`}
+                          >
+                            <item.icon className="h-4 w-4" />
+                          </div>
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <div className="flex justify-between items-center">
-                  <ModeToggle />
-                </div>
-              </SidebarMenuItem>
-            </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
 

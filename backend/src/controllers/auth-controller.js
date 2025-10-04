@@ -46,6 +46,7 @@ export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await UserModel.findUserByEmail(email);
+    console.log("test:", user);
     if (!user) return next(new AppError("Email not found!", 401));
 
     const correctPassword = await bcrypt.compare(password, user.user_password);
@@ -74,17 +75,28 @@ export const refresh = (req, res, next) => {
     const refreshToken = req.cookies.refresh_token;
     if (!refreshToken) return next(new AppError("No refresh token", 401));
 
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-      if (err) return next(new AppError("Invalid refresh token", 403));
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, decoded) => {
+        if (err) return next(new AppError("Invalid refresh token", 403));
 
-      const tokens = jwtTokens(user);
+        const payload = {
+          user_id: decoded.user_id,
+          user_name: decoded.user_name,
+          user_email: decoded.user_email,
+          user_role: decoded.role,
+        };
 
-      res.cookie("access_token", tokens.accessToken, {
-        ...cookieOptions,
-        maxAge: 15 * 60 * 1000,
-      });
-      res.json({ success: true });
-    });
+        const tokens = jwtTokens(payload);
+
+        res.cookie("access_token", tokens.accessToken, {
+          ...cookieOptions,
+          maxAge: 15 * 60 * 1000,
+        });
+        res.json({ success: true });
+      }
+    );
   } catch (err) {
     next(err);
   }
