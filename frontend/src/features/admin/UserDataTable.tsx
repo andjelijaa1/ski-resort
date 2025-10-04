@@ -70,6 +70,7 @@ export function DataTableDemo({ data = [] }: DataTableDemoProps) {
   };
 
   const columns: ColumnDef<User>[] = [
+    { accessorKey: " ", header: () => <p> </p> },
     {
       accessorKey: "user_name",
       header: ({ column }) => {
@@ -137,14 +138,7 @@ export function DataTableDemo({ data = [] }: DataTableDemoProps) {
                 <MoreHorizontal />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(user.user_id)}
-              >
-                Copy user ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
+            <DropdownMenuContent align="end" className="cursor-pointer">
               <DropdownMenuItem onClick={() => handleEditUser(user)}>
                 Change role
               </DropdownMenuItem>

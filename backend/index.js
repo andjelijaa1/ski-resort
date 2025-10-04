@@ -65,6 +65,7 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/auth", authRouter);
 app.use(authenticateToken);
 app.use("/api/users", userRouter);
+app.use("/api/rooms");
 
 app.use(errorHandler);
 

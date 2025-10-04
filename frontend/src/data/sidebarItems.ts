@@ -23,7 +23,6 @@ export const sidebarItems: Record<
     { title: "Dashboard", href: "/dashboard", icon: Home },
     { title: "Rooms", href: "/rooms", icon: Briefcase },
     { title: "Equipment", href: "/equipment", icon: Briefcase },
-    { title: "Instructors", href: "/instructors", icon: User },
     { title: "Reservations", href: "/reservations", icon: Calendar },
     { title: "Users", href: "/users", icon: Users },
     { title: "Settings", href: "/settings", icon: Settings },

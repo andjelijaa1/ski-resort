@@ -12,12 +12,6 @@ export interface UpdateUserData {
   user_role?: "admin" | "instructor" | "user";
 }
 
-// // Dobijanje svih korisnika
-// export async function getAllUsers(): Promise<User[]> {
-//   const res = await api.get("/users");
-//   return res.data;
-// }
-
 export async function updateUserRole(email: string, role: string) {
   const res = await api.put("/users/update-role", { email, role });
   return res.data;
