@@ -46,7 +46,6 @@ export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await UserModel.findUserByEmail(email);
-    console.log("test:", user);
     if (!user) return next(new AppError("Email not found!", 401));
 
     const correctPassword = await bcrypt.compare(password, user.user_password);

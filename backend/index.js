@@ -10,6 +10,8 @@ import { fileURLToPath } from "url";
 
 import authRouter from "./src/routes/auth-routes.js";
 import userRouter from "./src/routes/user-routes.js";
+import roomRouter from "./src/routes/room-routes.js";
+import eqRouter from "./src/routes/equipment-route.js";
 import { authenticateToken } from "./src/middleware/authorization.js";
 import errorHandler from "./src/middleware/errorHandler.js";
 
@@ -63,9 +65,10 @@ if (process.env.NODE_ENV === "development") {
 
 // Routes
 app.use("/api/auth", authRouter);
+app.use("/api/rooms", roomRouter);
+app.use("/api/equipment", eqRouter);
 app.use(authenticateToken);
 app.use("/api/users", userRouter);
-app.use("/api/rooms");
 
 app.use(errorHandler);
 

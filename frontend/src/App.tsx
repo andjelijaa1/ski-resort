@@ -6,6 +6,9 @@ import AppLayout from "@/components/layout/AppLayout";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import Users from "./pages/Users";
+import Rooms from "./pages/Rooms";
+import Equipment from "./pages/Equipment";
+import RoomDetails from "./features/admin/RoomDetails";
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
             <Route index element={<Navigate replace to="dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />
+            <Route path="equipment" element={<Equipment />} />
+            <Route path="rooms" element={<Rooms />} />
+            <Route path="rooms/:number" element={<RoomDetails />} />
             <Route path="*" element={<NotFound />} />
           </Route>
 

@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateUser, deleteUser } from "@/service/apiUsers";
+import { updateUser, deleteUser } from "@/service/apiAdmin";
 import type { User } from "@/types/types";
 
 interface EditUserModalProps {

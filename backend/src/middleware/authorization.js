@@ -21,7 +21,6 @@ function authenticateToken(req, res, next) {
           .status(401)
           .json({ error: "Invalid or expired access token" });
       }
-      console.log("JWT payload:", user); // <--- ovo treba da se stampa
       req.user = user;
       next();
     });

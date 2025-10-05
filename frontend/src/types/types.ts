@@ -26,3 +26,26 @@ export type User = {
   user_email: string;
   user_role: "user" | "instructor" | "admin";
 };
+
+export interface Room {
+  room_id: string;
+  room_number: string;
+  capacity: number;
+  price_per_night: string;
+  description: string;
+  is_active: boolean;
+  room_image_url: string | null;
+}
+
+export interface Equipment {
+  equipment_id: string;
+  equipment_type: string;
+  size: string;
+  brand: string;
+  model: string;
+  price_per_day: string;
+  available_quantity: number;
+  total_quantity: number;
+  is_active: boolean;
+  equipment_image_url: string | null;
+}
